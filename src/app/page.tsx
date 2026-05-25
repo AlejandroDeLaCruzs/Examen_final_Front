@@ -28,16 +28,11 @@ const Home = () => {
         .then((res) => {
           setCharacter(res.data.results);
           setInfo(res.data.info);
-          if (res.data.error) {
-            setnoHayResultados(true);
-          }
-          else{
-            setnoHayResultados(false);
-          }
         })
         .finally(() => setLoading(false));
     } catch (error) {
       console.log(error);
+      setnoHayResultados(true);
     }
   };
 
@@ -46,6 +41,8 @@ const Home = () => {
   }, [status, gender, page]);
 
   if (loading) return <h1>Loading...</h1>;
+
+  
 
   return (
     <div className="charactersConteiner">
@@ -84,6 +81,7 @@ const Home = () => {
         </div>
       </div>
 
+        
       <div className="characterList">
         {noHayResultados ? (
           <h1>no hay results</h1>

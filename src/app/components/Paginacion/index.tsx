@@ -13,13 +13,13 @@ export const Paginacion = ({
   return (
     <div className="paginacion">
       {1  < actualPage && (
-        <h1 onClick={() => setPage(info.pages - 2)}>{1}</h1>
+        <h1 onClick={() => setPage(1)}>{1}</h1>
       )}
       {2 < actualPage && (
-        <h1 onClick={() => setPage(info.pages - 1)}>{2}</h1>
+        <h1 onClick={() => setPage(2)}>{2}</h1>
       )}
       {3  < actualPage && (
-        <h1 onClick={() => setPage(info.pages)}>{3}</h1>
+        <h1 onClick={() => setPage(3)}>{3}</h1>
       )}
 
 
