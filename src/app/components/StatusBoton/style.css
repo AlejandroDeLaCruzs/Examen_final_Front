@@ -1,0 +1,8 @@
+.statusBoton button{
+    border-radius: 10px;
+    background-color: blueviolet;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    
+}

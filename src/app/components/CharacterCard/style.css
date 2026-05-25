@@ -1,0 +1,28 @@
+.characterConteiner {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
+    background-color: bisque;
+    border-radius: 18px;
+
+}
+
+.characterConteiner img {
+    border-radius: 50%;
+}
+
+.link {
+    text-decoration: none;
+}
+
+
+.dataCharacter {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: center;
+}
+.dataCharacter h1 {
+    color: blue;
+}

@@ -1,66 +1,102 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+"use client";
+import { api } from "@/lib/api/api";
+import { useEffect, useState } from "react";
+import { CharacterCard } from "./components/CharacterCard/index";
+import "./style.css";
+import { StatusBoton } from "./components/StatusBoton";
+import { GenderBoton } from "./components/GenderBoton";
+import { Paginacion } from "./components/Paginacion";
 
-export default function Home() {
+const Home = () => {
+  const [characters, setCharacter] = useState<character[] | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [info, setInfo] = useState<info>();
+  const [status, setStatus] = useState<string>("Dead");
+  const [indexStatus, setindexStatus] = useState<number>(0);
+  const [gender, setGender] = useState<string>("Female");
+  const [indexGender, setIndexGender] = useState<number>(0);
+  const [input, setInput] = useState<string>("");
+  const [page, setPage] = useState<number>(1);
+  const [noHayResultados, setnoHayResultados] = useState<boolean>(false);
+
+  const fetchData = () => {
+    try {
+      api
+        .get(
+          `/character/?status=${status}&gender=${gender}&name=${input}&page=${page}`,
+        )
+        .then((res) => {
+          setCharacter(res.data.results);
+          setInfo(res.data.info);
+          if (res.data.error) {
+            setnoHayResultados(true);
+          }
+          else{
+            setnoHayResultados(false);
+          }
+        })
+        .finally(() => setLoading(false));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [status, gender, page]);
+
+  if (loading) return <h1>Loading...</h1>;
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <div className="charactersConteiner">
+      <input
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key == "Enter") {
+            setPage(1);
+            fetchData();
+          }
+        }}
+      />
+      <h3>Filtros:</h3>
+      <div className="filtros">
+        <div className="filtroStatus">
+          <p>Status</p>
+          <StatusBoton
+            setStatus={setStatus}
+            index={indexStatus}
+            status={status}
+            setIndex={setindexStatus}
+            setPage={setPage}
+            
+          />
         </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <div>
+          <p>Gender</p>
+          <GenderBoton
+            setGender={setGender}
+            setIndex={setIndexGender}
+            gender={gender}
+            index={indexGender}
+            setPage={setPage}
+          />
         </div>
-      </main>
+      </div>
+
+      <div className="characterList">
+        {noHayResultados ? (
+          <h1>no hay results</h1>
+        ) : (
+          characters &&
+          characters.map((character) => (
+            <CharacterCard character={character} key={character.id} />
+          ))
+        )}
+      </div>
+      {info && <Paginacion setPage={setPage} actualPage={page} info={info}/>}
     </div>
   );
-}
+};
+
+export default Home;
